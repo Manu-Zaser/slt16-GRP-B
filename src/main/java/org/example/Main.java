@@ -2,7 +2,7 @@ package org.example;
 
 public class Main {
     public static void main(String[] args) {
-        Board board = new Board();
-        System.out.println(board.getBoardAsString());
+        TicTacToe game = new TicTacToe();
+        game.start();
     }
 }
