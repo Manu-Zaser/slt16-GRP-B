@@ -11,7 +11,8 @@ public class TicTacToe {
 
     public void start() {
         try (Scanner scanner = new Scanner(System.in)) {
-            while (true) { // Endlosschleife für diese User Story
+            boolean gameEnded = false;
+            while (!gameEnded) {
                 System.out.println(board.getBoardAsString());
                 System.out.println("Aktueller Spieler: " + currentPlayer.getMarker());
 
@@ -26,9 +27,26 @@ public class TicTacToe {
                         System.out.println("Dieses Feld ist belegt. Bitte wähle ein anderes.");
                     }
                 }
-                currentPlayer = (currentPlayer == player1) ? player2 : player1;
+
+                gameEnded = checkGameEndAndDisplayResult();
+                if (!gameEnded) {
+                    currentPlayer = (currentPlayer == player1) ? player2 : player1;
+                }
             }
         }
+    }
+
+    private boolean checkGameEndAndDisplayResult() {
+        if (board.checkWin(currentPlayer.getMarker())) {
+            System.out.println(board.getBoardAsString());
+            System.out.println("Spieler " + currentPlayer.getMarker() + " hat gewonnen!");
+            return true;
+        } else if (board.isFull()) {
+            System.out.println(board.getBoardAsString());
+            System.out.println("Das Spiel ist ein Unentschieden!");
+            return true;
+        }
+        return false;
     }
 
     private int readCoordinate(String coordinateName, Scanner scanner) {
