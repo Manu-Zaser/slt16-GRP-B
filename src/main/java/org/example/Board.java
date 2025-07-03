@@ -17,7 +17,7 @@ public class Board {
     public String getBoardAsString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n");
-        sb.append("▁▁▁▁▁▁▁\n");
+        sb.append("-------\n");
         for (int i = 0; i < SIZE; i++) {
             sb.append("|");
             for (int j = 0; j < SIZE; j++) {
@@ -25,7 +25,17 @@ public class Board {
             }
             sb.append("\n");
         }
-        sb.append("▔▔▔▔▔▔▔\n");
+        sb.append("-------\n");
         return sb.toString();
     }
+
+    public boolean isCellEmpty(int x, int y) {
+        return x >= 0 && x < 3 && y >= 0 && y < 3 && cells[x][y] == ' ';
+    }
+    public void place(int x, int y, char marker) {
+        if (isCellEmpty(x, y)) {
+            cells[x][y] = marker;
+        }
+    }
+
 }
