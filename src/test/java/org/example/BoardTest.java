@@ -91,4 +91,51 @@ class BoardTest {
 
         assertEquals(boardStateBefore, boardStateAfter, "Board state should not change when placing out of bounds.");
     }
+
+    @Test
+    void checkWinShouldReturnTrueForHorizontalWin() {
+        board.place(0, 0, 'X');
+        board.place(0, 1, 'X');
+        board.place(0, 2, 'X');
+        assertTrue(board.checkWin('X'));
+    }
+
+    @Test
+    void checkWinShouldReturnTrueForVerticalWin() {
+        board.place(0, 1, 'O');
+        board.place(1, 1, 'O');
+        board.place(2, 1, 'O');
+        assertTrue(board.checkWin('O'));
+    }
+
+    @Test
+    void checkWinShouldReturnTrueForDiagonalWin() {
+        board.place(0, 0, 'X');
+        board.place(1, 1, 'X');
+        board.place(2, 2, 'X');
+        assertTrue(board.checkWin('X'));
+    }
+
+    @Test
+    void checkWinShouldReturnFalseWhenNoWinner() {
+        board.place(0, 0, 'X');
+        board.place(1, 1, 'O');
+        assertFalse(board.checkWin('X'));
+        assertFalse(board.checkWin('O'));
+    }
+
+    @Test
+    void isFullShouldReturnTrueWhenBoardIsFull() {
+        board.place(0,0,'X'); board.place(0,1,'O'); board.place(0,2,'X');
+        board.place(1,0,'O'); board.place(1,1,'X'); board.place(1,2,'O');
+        board.place(2,0,'X'); board.place(2,1,'O'); board.place(2,2,'X');
+        assertTrue(board.isFull());
+    }
+
+    @Test
+    void isFullShouldReturnFalseWhenBoardIsNotFull() {
+        board.place(0,0,'X');
+        assertFalse(board.isFull());
+    }
+
 }

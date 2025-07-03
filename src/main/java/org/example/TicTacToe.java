@@ -11,7 +11,8 @@ public class TicTacToe {
 
     public void start() {
         try (Scanner scanner = new Scanner(System.in)) {
-            while (true) { // Endlosschleife für diese User Story
+            boolean gameEnded = false;
+            while (!gameEnded) {
                 System.out.println(board.getBoardAsString());
                 System.out.println("Aktueller Spieler: " + currentPlayer.getMarker());
 
@@ -27,6 +28,18 @@ public class TicTacToe {
                     }
                 }
                 currentPlayer = (currentPlayer == player1) ? player2 : player1;
+
+                if (board.checkWin(currentPlayer.getMarker())) {
+                    System.out.println(board.getBoardAsString());
+                    System.out.println("Spieler " + currentPlayer.getMarker() + " hat gewonnen!");
+                    gameEnded = true;
+                } else if (board.isFull()) {
+                    System.out.println(board.getBoardAsString());
+                    System.out.println("Das Spiel ist ein Unentschieden!");
+                    gameEnded = true;
+                } else {
+                    currentPlayer = (currentPlayer == player1) ? player2 : player1;
+                }
             }
         }
     }
