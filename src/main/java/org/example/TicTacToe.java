@@ -11,59 +11,57 @@ public class TicTacToe {
 
     public void start() {
         try (Scanner scanner = new Scanner(System.in)) {
-            boolean gameEnded = false;
-            while (!gameEnded) {
-                System.out.println(board.getBoardAsString());
-                System.out.println("Aktueller Spieler: " + currentPlayer.getMarker());
+            while (true) { // Äußere Schleife für mehrere Spiele
+                runGameLoop(scanner);
 
-                int row, col;
-                while (true) {
-                    row = readCoordinate("Zeile", scanner);
-                    col = readCoordinate("Spalte", scanner);
-                    if (board.isCellEmpty(row, col)) {
-                        board.place(row, col, currentPlayer.getMarker());
-                        break;
-                    } else {
-                        System.out.println("Dieses Feld ist belegt. Bitte wähle ein anderes.");
-                    }
+                System.out.print("Nochmal spielen? (ja/nein): ");
+                String response = scanner.next();
+                if (!response.equalsIgnoreCase("ja")) {
+                    System.out.println("Danke fürs Spielen!");
+                    break;
                 }
-
-                gameEnded = checkGameEndAndDisplayResult();
-                if (!gameEnded) {
-                    currentPlayer = (currentPlayer == player1) ? player2 : player1;
-                }
+                resetGame();
             }
         }
     }
 
-    private boolean checkGameEndAndDisplayResult() {
-        if (board.checkWin(currentPlayer.getMarker())) {
+    private void runGameLoop(Scanner scanner) {
+        boolean gameEnded = false;
+        while (!gameEnded) {
             System.out.println(board.getBoardAsString());
-            System.out.println("Spieler " + currentPlayer.getMarker() + " hat gewonnen!");
-            return true;
-        } else if (board.isFull()) {
-            System.out.println(board.getBoardAsString());
-            System.out.println("Das Spiel ist ein Unentschieden!");
-            return true;
-        }
-        return false;
-    }
+            System.out.println("Aktueller Spieler: " + currentPlayer.getMarker());
 
-    private int readCoordinate(String coordinateName, Scanner scanner) {
-        int coordinate;
-        while (true) {
-            System.out.print("Gib die " + coordinateName + " ein (0-2): ");
-            try {
-                coordinate = scanner.nextInt();
-                if (coordinate >= 0 && coordinate <= 2) {
-                    return coordinate;
+            int row, col;
+            while (true) {
+                System.out.print("Gib die Zeile ein (0-2): ");
+                row = scanner.nextInt();
+                System.out.print("Gib die Spalte ein (0-2): ");
+                col = scanner.nextInt();
+
+                if (board.isCellEmpty(row, col)) {
+                    board.place(row, col, currentPlayer.getMarker());
+                    break;
                 } else {
-                    System.out.println("Fehler: Bitte eine Zahl zwischen 0 und 2 eingeben.");
+                    System.out.println("Ungültiger Zug! Versuche es erneut.");
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("Fehler: Das ist keine gültige Zahl. Bitte versuche es erneut.");
-                scanner.next();
+            }
+
+            if (board.checkWin(currentPlayer.getMarker())) {
+                System.out.println(board.getBoardAsString());
+                System.out.println("Spieler " + currentPlayer.getMarker() + " hat gewonnen!");
+                gameEnded = true;
+            } else if (board.isFull()) {
+                System.out.println(board.getBoardAsString());
+                System.out.println("Das Spiel ist ein Unentschieden!");
+                gameEnded = true;
+            } else {
+                currentPlayer = (currentPlayer == player1) ? player2 : player1;
             }
         }
+    }
+
+    private void resetGame() {
+        board.clear();
+        currentPlayer = player1;
     }
 }

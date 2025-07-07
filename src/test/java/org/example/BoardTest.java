@@ -138,4 +138,17 @@ class BoardTest {
         assertFalse(board.isFull());
     }
 
+    @Test
+    void clearShouldResetTheBoard() {
+        // Arrange
+        board.place(0, 0, 'X');
+        board.place(1, 1, 'O');
+
+        // Act
+        board.clear();
+
+        // Assert
+        assertTrue(board.isCellEmpty(0, 0));
+        assertTrue(board.isCellEmpty(1, 1));
+    }
 }
