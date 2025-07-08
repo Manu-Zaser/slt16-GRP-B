@@ -11,42 +11,73 @@ public class TicTacToe {
 
     public void start() {
         try (Scanner scanner = new Scanner(System.in)) {
-            boolean gameEnded = false;
-            while (!gameEnded) {
-                System.out.println(board.getBoardAsString());
-                System.out.println("Aktueller Spieler: " + currentPlayer.getMarker());
 
-                int row, col;
+            gameLoop:
+            while (true) {
+                runGameLoop(scanner);
+
                 while (true) {
-                    row = readCoordinate("Zeile", scanner);
-                    col = readCoordinate("Spalte", scanner);
-                    if (board.isCellEmpty(row, col)) {
-                        board.place(row, col, currentPlayer.getMarker());
-                        break;
-                    } else {
-                        System.out.println("Dieses Feld ist belegt. Bitte wähle ein anderes.");
-                    }
-                }
+                    System.out.print("Nochmal spielen? (ja/nein): ");
+                    String response = scanner.next();
 
-                gameEnded = checkGameEndAndDisplayResult();
-                if (!gameEnded) {
-                    currentPlayer = (currentPlayer == player1) ? player2 : player1;
+                    if (response.equalsIgnoreCase("ja")) {
+                        resetGame();
+                        break;
+                    } else if (response.equalsIgnoreCase("nein")) {
+                        System.out.println("Danke fürs Spielen!");
+                        break gameLoop;
+                    } else {
+                        System.out.println("Ungültige Eingabe! Bitte 'ja' oder 'nein' eingeben.");
+                    }
                 }
             }
         }
     }
 
-    private boolean checkGameEndAndDisplayResult() {
+    private void runGameLoop(Scanner scanner) {
+        boolean gameEnded = false;
+        while (!gameEnded) {
+            displayBoardState();
+            handlePlayerTurn(scanner);
+            gameEnded = checkGameStatus();
+        }
+    }
+
+    private void displayBoardState() {
+        System.out.println(board.getBoardAsString());
+        System.out.println("Aktueller Spieler: " + currentPlayer.getMarker());
+    }
+
+    private void handlePlayerTurn(Scanner scanner) {
+        while (true) {
+            int row = readCoordinate("Zeile", scanner);
+            int col = readCoordinate("Spalte", scanner);
+            if (board.isCellEmpty(row, col)) {
+                board.place(row, col, currentPlayer.getMarker());
+                return;
+            } else {
+                System.out.println("Dieses Feld ist bereits belegt. Bitte wähle ein anderes.");
+            }
+        }
+    }
+
+    private boolean checkGameStatus() {
         if (board.checkWin(currentPlayer.getMarker())) {
             System.out.println(board.getBoardAsString());
             System.out.println("Spieler " + currentPlayer.getMarker() + " hat gewonnen!");
             return true;
-        } else if (board.isFull()) {
+        }
+        if (board.isFull()) {
             System.out.println(board.getBoardAsString());
             System.out.println("Das Spiel ist ein Unentschieden!");
             return true;
         }
+        switchCurrentPlayer();
         return false;
+    }
+
+    private void switchCurrentPlayer() {
+        currentPlayer = (currentPlayer == player1) ? player2 : player1;
     }
 
     private int readCoordinate(String coordinateName, Scanner scanner) {
@@ -65,5 +96,10 @@ public class TicTacToe {
                 scanner.next();
             }
         }
+    }
+
+    private void resetGame() {
+        board.clear();
+        currentPlayer = player1;
     }
 }

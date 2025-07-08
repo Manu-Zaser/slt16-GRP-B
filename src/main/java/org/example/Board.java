@@ -59,4 +59,13 @@ public class Board {
         return (cells[0][0] == marker && cells[1][1] == marker && cells[2][2] == marker) ||
                 (cells[0][2] == marker && cells[1][1] == marker && cells[2][0] == marker);
     }
+
+    public final void clear() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                cells[i][j] = ' ';
+            }
+        }
+    }
+
 }
