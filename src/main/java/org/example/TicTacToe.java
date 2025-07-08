@@ -11,16 +11,25 @@ public class TicTacToe {
 
     public void start() {
         try (Scanner scanner = new Scanner(System.in)) {
-            while (true) { // Äußere Schleife für mehrere Spiele
+
+            gameLoop:
+            while (true) {
                 runGameLoop(scanner);
 
-                System.out.print("Nochmal spielen? (ja/nein): ");
-                String response = scanner.next();
-                if (!response.equalsIgnoreCase("ja")) {
-                    System.out.println("Danke fürs Spielen!");
-                    break;
+                while (true) {
+                    System.out.print("Nochmal spielen? (ja/nein): ");
+                    String response = scanner.next();
+
+                    if (response.equalsIgnoreCase("ja")) {
+                        resetGame();
+                        break;
+                    } else if (response.equalsIgnoreCase("nein")) {
+                        System.out.println("Danke fürs Spielen!");
+                        break gameLoop;
+                    } else {
+                        System.out.println("Ungültige Eingabe! Bitte 'ja' oder 'nein' eingeben.");
+                    }
                 }
-                resetGame();
             }
         }
     }
@@ -28,34 +37,63 @@ public class TicTacToe {
     private void runGameLoop(Scanner scanner) {
         boolean gameEnded = false;
         while (!gameEnded) {
-            System.out.println(board.getBoardAsString());
-            System.out.println("Aktueller Spieler: " + currentPlayer.getMarker());
+            displayBoardState();
+            handlePlayerTurn(scanner);
+            gameEnded = checkGameStatus();
+        }
+    }
 
-            int row, col;
-            while (true) {
-                System.out.print("Gib die Zeile ein (0-2): ");
-                row = scanner.nextInt();
-                System.out.print("Gib die Spalte ein (0-2): ");
-                col = scanner.nextInt();
+    private void displayBoardState() {
+        System.out.println(board.getBoardAsString());
+        System.out.println("Aktueller Spieler: " + currentPlayer.getMarker());
+    }
 
-                if (board.isCellEmpty(row, col)) {
-                    board.place(row, col, currentPlayer.getMarker());
-                    break;
-                } else {
-                    System.out.println("Ungültiger Zug! Versuche es erneut.");
-                }
-            }
-
-            if (board.checkWin(currentPlayer.getMarker())) {
-                System.out.println(board.getBoardAsString());
-                System.out.println("Spieler " + currentPlayer.getMarker() + " hat gewonnen!");
-                gameEnded = true;
-            } else if (board.isFull()) {
-                System.out.println(board.getBoardAsString());
-                System.out.println("Das Spiel ist ein Unentschieden!");
-                gameEnded = true;
+    private void handlePlayerTurn(Scanner scanner) {
+        while (true) {
+            int row = readCoordinate("Zeile", scanner);
+            int col = readCoordinate("Spalte", scanner);
+            if (board.isCellEmpty(row, col)) {
+                board.place(row, col, currentPlayer.getMarker());
+                return;
             } else {
-                currentPlayer = (currentPlayer == player1) ? player2 : player1;
+                System.out.println("Dieses Feld ist bereits belegt. Bitte wähle ein anderes.");
+            }
+        }
+    }
+
+    private boolean checkGameStatus() {
+        if (board.checkWin(currentPlayer.getMarker())) {
+            System.out.println(board.getBoardAsString());
+            System.out.println("Spieler " + currentPlayer.getMarker() + " hat gewonnen!");
+            return true;
+        }
+        if (board.isFull()) {
+            System.out.println(board.getBoardAsString());
+            System.out.println("Das Spiel ist ein Unentschieden!");
+            return true;
+        }
+        switchCurrentPlayer();
+        return false;
+    }
+
+    private void switchCurrentPlayer() {
+        currentPlayer = (currentPlayer == player1) ? player2 : player1;
+    }
+
+    private int readCoordinate(String coordinateName, Scanner scanner) {
+        int coordinate;
+        while (true) {
+            System.out.print("Gib die " + coordinateName + " ein (0-2): ");
+            try {
+                coordinate = scanner.nextInt();
+                if (coordinate >= 0 && coordinate <= 2) {
+                    return coordinate;
+                } else {
+                    System.out.println("Fehler: Bitte eine Zahl zwischen 0 und 2 eingeben.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Fehler: Das ist keine gültige Zahl. Bitte versuche es erneut.");
+                scanner.next();
             }
         }
     }
